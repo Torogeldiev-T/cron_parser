@@ -53,9 +53,9 @@ class Cron:
         self.validate_days_of_week(days_week_digits, self.tokens[0])
 
         # parses the token for the minutes
-        self.minutes = self.parse_current(0, self.tokens[0], [], 0, minute_digits, 61)
+        self.minutes = self.parse_current(0, self.tokens[0], [], 0, minute_digits, 60)
         # parses the token for the hours
-        self.hours = self.parse_current(0, self.tokens[1], [], 0, hours_digits, 25)
+        self.hours = self.parse_current(0, self.tokens[1], [], 0, hours_digits, 24)
         # parses the token for the days of month
         self.days_month = self.parse_current(
             0, self.tokens[2], [], 0, days_month_digits, 32
@@ -81,7 +81,8 @@ class Cron:
             # if current char is "*"
             if token[idx] == "*":
                 # sets all values in range from 1 till maximum possible value
-                current_res = [j for j in range(1, controller)]
+                lower_bound = 0 if controller in [60, 24] else 1
+                current_res = [j for j in range(lower_bound, controller)]
                 # then calls method for the next index
                 current_res = self.parse_current(
                     idx + 1,
@@ -105,10 +106,12 @@ class Cron:
                         # if there are chars left check if it is "/"
                         if token[idx + len(current_number) + 1] == "/":
                             # get values from range temp_minute till max possible value because upper bound is not given
-                            temp_minute = current_number
+                            temp_controller = current_number
                             temp_res = [
-                                temp_minute
-                                for temp_minute in range(int(temp_minute), 61)
+                                temp_controller
+                                for temp_controller in range(
+                                    int(temp_controller), controller
+                                )
                             ]
                             # increment controller index if it is less then lenth of controller_digits
                             if controller_idx + 1 < len(controller_digits):
@@ -212,10 +215,12 @@ class Cron:
                 if idx + len(current_number) < len(token):
                     # if next char is "/" then return range to max possible value
                     if token[idx + len(current_number)] == "/":
-                        temp_minute = current_number
+                        temp_controller = current_number
                         current_res = [
-                            temp_minute
-                            for temp_minute in range(int(temp_minute), controller)
+                            temp_controller
+                            for temp_controller in range(
+                                int(temp_controller), controller
+                            )
                         ]
                         # increment currnet index
                         if controller_idx + 1 < len(controller_digits):
@@ -289,7 +294,7 @@ class Cron:
 
     # displays results
     def dislpay(self):
-        print("current_number:", end=" ")
+        print("minute:", end=" ")
         for i in self.minutes:
             print(i, end=" ")
         print("\nhour:", end=" ")

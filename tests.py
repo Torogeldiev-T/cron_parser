@@ -28,7 +28,7 @@ class ParseMinuteTestCase(unittest.TestCase):
         self.assertCountEqual(self.cron.minutes, [0, 1, 2, 3, 4, 5, 50, 52, 54, 56, 58])
 
     def test_hour_slash(self):
-        self.assertCountEqual(self.cron.hours, [20, 22, 24])
+        self.assertCountEqual(self.cron.hours, [20, 22])
 
     def test_days_of_week_months(self):
         self.assertCountEqual(self.cron.days_week, [1, 2, 3, 4, 5, 6, 7])
